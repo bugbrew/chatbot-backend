@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 
 import java.io.ByteArrayOutputStream;
 
@@ -32,7 +30,7 @@ import com.example.demo.service.GeminiService;
 
 @RestController
 @RequestMapping("/api/chatbot-3")
-@CrossOrigin(origins = "http://127.0.0.1:5500") 
+@CrossOrigin(origins = "https://storybuddy-6m7u.vercel.app")
 public class ChatbotController {
 
     @Autowired
@@ -43,13 +41,14 @@ public class ChatbotController {
         String result = geminiService.generateResponse(request.getStory(), request.getDomain());
         return new ChatResponse(result);
     }
+
     @PostMapping("/question")
     public ChatResponse handleQuestion(@RequestBody Map<String, String> payload) {
         String question = payload.get("question");
         String result = geminiService.generateResponseForQuestion(question);
         return new ChatResponse(result);
     }
-    
+
     @PostMapping("/requirement-to-story")
     public ChatResponse convertRequirementToStory(@RequestBody Map<String, String> payload) {
         String requirement = payload.get("requirement");
@@ -60,14 +59,13 @@ public class ChatbotController {
         String story = geminiService.convertRequirementToStory(requirement);
         return new ChatResponse(story);
     }
-    
+
     @PostMapping("/estimate-effort")
     public ChatResponse estimateEffort(@RequestBody Map<String, String> payload) {
         String story = payload.get("story");
         String estimate = geminiService.estimateEffortFromStory(story);
         return new ChatResponse(estimate);
     }
-
 
     @PostMapping("/export-excel")
     public ResponseEntity<byte[]> exportExcelFromAnalyzer(@RequestBody Map<String, String> payload) {
@@ -100,7 +98,7 @@ public class ChatbotController {
             // Add dropdown to Status column
             DataValidationHelper validationHelper = sheet.getDataValidationHelper();
             DataValidationConstraint constraint = validationHelper.createExplicitListConstraint(
-                    new String[]{"Yet to Execute", "Pass", "Fail"});
+                    new String[] { "Yet to Execute", "Pass", "Fail" });
             CellRangeAddressList addressList = new CellRangeAddressList(1, 999, 3, 3); // D2:D1000
             DataValidation validation = validationHelper.createValidation(constraint, addressList);
             validation.setShowErrorBox(true);
@@ -120,9 +118,5 @@ public class ChatbotController {
                     .body(("Failed to generate Excel: " + e.getMessage()).getBytes());
         }
     }
-
-
-
-
 
 }
